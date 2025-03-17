@@ -6,15 +6,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { apiKey, message } = req.body;
+    const { apiKey, messages } = req.body;
 
     // Validate inputs
     if (!apiKey) {
       return res.status(400).json({ error: 'API key is required' });
     }
 
-    if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: 'Valid message history is required' });
     }
 
     // Call Anthropic API
@@ -27,10 +27,8 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-3-5-sonnet-20240620',
-        max_tokens: 1000,
-        messages: [
-          { role: 'user', content: message }
-        ]
+        max_tokens: 1500,
+        messages: messages
       })
     });
 
